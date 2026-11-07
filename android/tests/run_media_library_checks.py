@@ -9,7 +9,6 @@ import os
 import subprocess
 import tempfile
 import threading
-# CI smoke marker: assert the verify job runs on a server-generated merge.
 from urllib.parse import urlsplit
 # Registered in the verify-and-checks job of build-multiplatform.yml.
 

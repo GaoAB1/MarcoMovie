@@ -39,8 +39,7 @@ public final class MediaLibrarySettings {
     }
 
     /** Rebuild instead of JSONArray.remove(int), which is not available on API 14. */
-    private static JSONArray withoutSite(JSONArray sites, String api, String key)
-            throws Exception {
+    private static JSONArray withoutSite(JSONArray sites, String api, String key) throws Exception {
         JSONArray out = new JSONArray();
         for (int i = 0; i < sites.length(); i++) {
             JSONObject existing = sites.optJSONObject(i);
@@ -53,8 +52,7 @@ public final class MediaLibrarySettings {
 
     /** Validate an account reference before it is used as a preference key. */
     public static String key(String api) throws IOException {
-        if (api == null || !api.startsWith(EmbyLibrary.PREFIX))
-            throw new IOException("Emby 来源无效");
+        if (api == null || !api.startsWith(EmbyLibrary.PREFIX)) throw new IOException("Emby 来源无效");
         String value = api.substring(EmbyLibrary.PREFIX.length());
         if (!value.matches("[a-zA-Z0-9_-]+")) throw new IOException("Emby 账户编号无效");
         return value;

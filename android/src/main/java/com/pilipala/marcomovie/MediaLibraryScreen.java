@@ -50,8 +50,7 @@ final class MediaLibraryScreen {
     private void save(String api, JSONObject selection, JSONArray known) {
         try {
             String key = MediaLibrarySettings.key(api);
-            store()
-                    .edit()
+            store().edit()
                     .putString(MediaLibrarySettings.SETTINGS_PREFIX + key, selection.toString())
                     .putString(MediaLibrarySettings.VIEWS_PREFIX + key, known.toString())
                     .commit();
@@ -87,8 +86,7 @@ final class MediaLibraryScreen {
     void show() {
         ui.page("媒体库", "连接你自己的 Emby 服务器。登录凭据与媒体库设置只保存在本机。");
         List<String> apis = accounts();
-        if (apis.isEmpty())
-            a.paragraph("还没有连接 Emby 服务器。添加后即可在首页浏览服务器里的电影与剧集。");
+        if (apis.isEmpty()) a.paragraph("还没有连接 Emby 服务器。添加后即可在首页浏览服务器里的电影与剧集。");
         for (int i = 0; i < apis.size(); i++) {
             final String target = apis.get(i);
             ui.link(
@@ -106,15 +104,8 @@ final class MediaLibraryScreen {
         a.paragraph("服务器：" + sessionDetail(api));
         JSONArray known = views(api);
         JSONObject selection = settings(api);
-        a.paragraph(
-                known.length() == 0
-                        ? "尚未同步媒体库列表，请先测试连接。"
-                        : "已同步 " + known.length() + " 个媒体库。");
-        ui.link(
-                "测试连接并同步媒体库",
-                "验证登录状态，刷新可选择的媒体库列表",
-                "media-library-sync",
-                () -> sync(api));
+        a.paragraph(known.length() == 0 ? "尚未同步媒体库列表，请先测试连接。" : "已同步 " + known.length() + " 个媒体库。");
+        ui.link("测试连接并同步媒体库", "验证登录状态，刷新可选择的媒体库列表", "media-library-sync", () -> sync(api));
         int shown = MediaLibrarySettings.visibleIds(selection, known).length();
         ui.link(
                 "首页显示的媒体库",
@@ -127,23 +118,14 @@ final class MediaLibraryScreen {
                 parent.isEmpty() ? "全部媒体库" : label(known, parent),
                 "media-library-default",
                 () -> chooseDefault(api));
-        ui.link(
-                "重新登录",
-                "凭据过期或需要切换账号时使用",
-                "media-library-relogin",
-                this::connect);
-        ui.link(
-                "移除此服务器",
-                "同时清除本机登录状态与媒体库设置",
-                "media-library-remove",
-                () -> remove(api));
+        ui.link("重新登录", "凭据过期或需要切换账号时使用", "media-library-relogin", this::connect);
+        ui.link("移除此服务器", "同时清除本机登录状态与媒体库设置", "media-library-remove", () -> remove(api));
     }
 
     private String label(JSONArray known, String id) {
         for (int i = 0; i < known.length(); i++) {
             JSONObject row = known.optJSONObject(i);
-            if (row != null && id.equals(row.optString("id")))
-                return row.optString("name", id);
+            if (row != null && id.equals(row.optString("id"))) return row.optString("name", id);
         }
         return id;
     }

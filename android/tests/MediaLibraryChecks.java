@@ -42,9 +42,7 @@ public final class MediaLibraryChecks {
 
     private static void settingsChecks() throws Exception {
         String normalized = MediaLibrarySettings.normalizeServer(" https://emby.example:8920/ ");
-        check(
-                "https://emby.example:8920/emby".equals(normalized),
-                "server root normalization");
+        check("https://emby.example:8920/emby".equals(normalized), "server root normalization");
         check(
                 "https://emby.example/emby"
                         .equals(MediaLibrarySettings.normalizeServer("https://emby.example/emby/")),
@@ -56,12 +54,12 @@ public final class MediaLibraryChecks {
 
         JSONObject session =
                 new JSONObject()
-                        .put("base", "https://emby.example:8920/emby")
+                        .put("base", "https://media.example:8920/emby")
                         .put("token", "secret-token")
                         .put("user", "u1")
                         .put("device", "fixture-device");
         String text = MediaLibrarySettings.describe(session);
-        check("https://emby.example:8920 · u1".equals(text), "session summary");
+        check("https://media.example:8920 · u1".equals(text), "session summary");
         check(!text.contains("secret-token") && !text.contains("/emby"), "credential scope");
         check(
                 "登录状态已失效，请重新登录".equals(MediaLibrarySettings.describe(null)),
@@ -85,15 +83,13 @@ public final class MediaLibraryChecks {
         check(MediaLibrarySettings.visibleIds(unset, views).length() == 3, "all views by default");
         JSONObject subset =
                 new JSONObject()
-                        .put(
-                                "visible",
-                                new JSONArray().put("v2").put("missing").put("bad id"));
+                        .put("visible", new JSONArray().put("v2").put("missing").put("bad id"));
         check(
                 MediaLibrarySettings.visibleIds(subset, views).length() == 1,
                 "unknown and invalid ids dropped");
         check(
                 MediaLibrarySettings.visibleIds(
-                                new JSONObject().put("visible", new JSONArray()), views)
+                                        new JSONObject().put("visible", new JSONArray()), views)
                                 .length()
                         == 0,
                 "hide every view");
@@ -137,7 +133,7 @@ public final class MediaLibraryChecks {
                 "filtered category identity");
         check(
                 MediaLibrarySettings.filterHome(
-                                home, new JSONObject().put("visible", new JSONArray()))
+                                        home, new JSONObject().put("visible", new JSONArray()))
                                 .getJSONArray("class")
                                 .length()
                         == 0,
@@ -179,8 +175,8 @@ public final class MediaLibraryChecks {
                 "other source intact");
         check(
                 new JSONObject(MediaLibrarySettings.removeSite("", ""))
-                        .getJSONArray("sites")
-                        .length()
+                                .getJSONArray("sites")
+                                .length()
                         == 0,
                 "empty config removal");
     }

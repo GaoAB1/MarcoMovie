@@ -1,4 +1,7 @@
-"""Exercise the shared media library rules and the Emby views API against a local HTTP server."""
+"""Exercise the shared media library rules and the Emby views API.
+
+The HTTP fixture runs locally, so these checks need no live Emby server or credentials.
+"""
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 import json

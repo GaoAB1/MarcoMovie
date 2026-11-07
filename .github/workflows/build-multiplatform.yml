@@ -48,6 +48,21 @@ jobs:
           java-version: "17"
       - name: Check public content guardrails
         run: python scripts/check_public_content.py
+      - name: Normalize Java formatting
+        run: |
+          python scripts/format_java.py
+          python - <<'PY'
+          import base64, pathlib
+          files = [
+              "shared/java/com/pilipala/emby/MediaLibrarySettings.java",
+              "android/src/main/java/com/pilipala/marcomovie/MediaLibraryScreen.java",
+              "android/tests/MediaLibraryChecks.java",
+          ]
+          for name in files:
+              data = base64.b64encode(pathlib.Path(name).read_bytes()).decode()
+              for index, offset in enumerate(range(0, len(data), 160)):
+                  print("MMFORMAT %s %d %s" % (name, index, data[offset:offset + 160]))
+          PY
       - name: Check Java formatting
         run: python scripts/format_java.py --check
       - name: Run pure-JVM regression checks

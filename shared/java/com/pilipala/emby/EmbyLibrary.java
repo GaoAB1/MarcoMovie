@@ -42,7 +42,7 @@ public final class EmbyLibrary {
         device = session.getString("device");
     }
 
-    static String normalize(String raw) throws Exception {
+    public static String normalize(String raw) throws Exception {
         URL url = new URL(raw.trim());
         if (!(url.getProtocol().equals("http") || url.getProtocol().equals("https"))
                 || url.getHost().length() == 0
@@ -405,15 +405,31 @@ public final class EmbyLibrary {
                                 + account);
     }
 
+    /** The server's media libraries, used by the settings screen and the home categories. */
+    public JSONArray views() throws Exception {
+        JSONArray rows = get("/Users/" + user + "/Views").getJSONArray("Items");
+        JSONArray out = new JSONArray();
+        for (int i = 0; i < rows.length(); i++) {
+            JSONObject row = rows.getJSONObject(i);
+            String id = segment(row.getString("Id"));
+            out.put(
+                    new JSONObject()
+                            .put("id", id)
+                            .put("name", row.optString("Name", id))
+                            .put("type", row.optString("CollectionType", "")));
+        }
+        return out;
+    }
+
     public JSONObject home() throws Exception {
-        JSONArray views = get("/Users/" + user + "/Views").getJSONArray("Items"),
-                groups = new JSONArray();
+        JSONArray views = views();
+        JSONArray groups = new JSONArray();
         for (int i = 0; i < views.length(); i++) {
             JSONObject row = views.getJSONObject(i);
             groups.put(
                     new JSONObject()
-                            .put("type_id", row.getString("Id"))
-                            .put("type_name", row.optString("Name")));
+                            .put("type_id", row.getString("id"))
+                            .put("type_name", row.getString("name")));
         }
         return new JSONObject().put("class", groups).put("list", new JSONArray());
     }

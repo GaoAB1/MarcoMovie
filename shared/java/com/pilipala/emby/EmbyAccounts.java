@@ -17,10 +17,37 @@ public final class EmbyAccounts {
     }
 
     public static EmbyLibrary open(Context context, String api) throws Exception {
+        JSONObject stored = session(context, api);
+        if (stored == null) throw new IOException("请在本机重新登录 Emby");
+        return new EmbyLibrary(stored);
+    }
+
+    /** The locally stored login session, or null when the account needs a fresh login. */
+    public static JSONObject session(Context context, String api) throws Exception {
         if (!api.startsWith(EmbyLibrary.PREFIX)) throw new IOException("Emby 来源无效");
-        String raw = context.getSharedPreferences("emby.accounts", 0).getString(api, "");
-        if (raw.length() == 0) throw new IOException("请在本机重新登录 Emby");
-        return new EmbyLibrary(new JSONObject(raw));
+        String raw =
+                context.getSharedPreferences(MediaLibrarySettings.PREFERENCES, 0)
+                        .getString(api, "");
+        return raw.length() == 0 ? null : new JSONObject(raw);
+    }
+
+    /** Drop credentials and every setting tied to one account. */
+    public static void forget(Context context, String api) {
+        try {
+            String key = MediaLibrarySettings.key(api);
+            SharedPreferences.Editor edit =
+                    context.getSharedPreferences(MediaLibrarySettings.PREFERENCES, 0)
+                            .edit()
+                            .remove(api)
+                            .remove(MediaLibrarySettings.SETTINGS_PREFIX + key)
+                            .remove(MediaLibrarySettings.VIEWS_PREFIX + key);
+            edit.commit();
+        } catch (Exception ignored) {
+            context.getSharedPreferences(MediaLibrarySettings.PREFERENCES, 0)
+                    .edit()
+                    .remove(api)
+                    .commit();
+        }
     }
 
     public static void connect(final Activity a, final OnConnected callback) {
@@ -64,7 +91,8 @@ public final class EmbyAccounts {
                         }
                         submit.setEnabled(false);
                         status.setText("正在连接…");
-                        final SharedPreferences prefs = a.getSharedPreferences("emby.accounts", 0);
+                        final SharedPreferences prefs =
+                                a.getSharedPreferences(MediaLibrarySettings.PREFERENCES, 0);
                         String existing = prefs.getString("device", "");
                         if (existing.length() == 0) {
                             existing = UUID.randomUUID().toString();

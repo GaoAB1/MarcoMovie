@@ -68,6 +68,11 @@ final class SettingsScreen {
         page("设置", "");
         link("首页与壁纸", "", "settings-appearance", () -> open(this::appearance));
         link("播放与字幕", "", "settings-playback", () -> open(this::playback));
+        link(
+                "媒体库",
+                "连接 Emby 服务器、选择要显示的媒体库",
+                "settings-media-library",
+                () -> open(() -> new MediaLibraryScreen(a).show()));
         link("搜索与数据", "", "settings-data", () -> open(this::data));
         link("软件更新", "", "settings-updates", () -> open(() -> new UpdateScreen(a).show()));
     }

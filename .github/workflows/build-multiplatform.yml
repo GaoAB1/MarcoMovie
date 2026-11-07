@@ -62,6 +62,7 @@ jobs:
           python android/tests/run_tv_input_checks.py
           python android/tests/run_local_package_checks.py
           python android/tests/run_emby_checks.py
+          python android/tests/run_media_library_checks.py
           python android/tests/run_compat_checks.py
           python android/tests/run_favorites_checks.py
           python android/tests/run_warehouse_checks.py

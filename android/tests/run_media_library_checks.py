@@ -10,6 +10,7 @@ import subprocess
 import tempfile
 import threading
 from urllib.parse import urlsplit
+# Registered in the verify-and-checks job of build-multiplatform.yml.
 
 root = Path(__file__).resolve().parents[2]
 jdk = Path(os.environ.get("MARCOMOVIE_JDK") or os.environ["JAVA_HOME"]) / "bin"
